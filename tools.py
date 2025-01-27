@@ -1,51 +1,83 @@
-"""Tool definitions for the Fun Assistant."""
+"""Tool definitions for the Logistics Route Planner."""
 
 # List of available tools
 TOOLS = [
     {
-        "name": "find_joke",
+        "name": "find_routes",
         "description": """
-Find a random joke to make someone laugh! You can specify a category for a more specific type of joke.
+Find available shipping routes between two cities. Returns multiple route options with estimated base times.
 
-Example categories:
-- programming: Jokes about coding and software
-- general: Any kind of joke
-- dad_joke: Classic dad jokes
+Parameters:
+- origin: Starting city (e.g. "Boston, MA")
+- destination: End city (e.g. "Miami, FL")
 
-The tool will return a joke as a string.
+Returns a list of route objects with:
+- route_id: Unique identifier
+- estimated_hours: Base travel time without delays
+- via: Major cities or highways on route
         """.strip(),
         "parameters": {
             "type": "object",
             "properties": {
-                "category": {
+                "origin": {
                     "type": "string",
-                    "description": "Type of joke to find",
-                    "enum": ["programming", "general", "dad_joke"]
+                    "description": "Starting city"
+                },
+                "destination": {
+                    "type": "string",
+                    "description": "Destination city"
                 }
-            }
+            },
+            "required": ["origin", "destination"]
         }
     },
     {
-        "name": "tell_fortune",
+        "name": "check_conditions",
         "description": """
-Get a silly prediction about the future! Specify a topic to get a more focused fortune.
+Check current traffic and weather conditions for a specific route.
 
-Example topics:
-- career: Job and professional life
-- love: Relationships and romance
-- general: Any kind of prediction
+Parameters:
+- route_id: Route identifier from find_routes
 
-The tool will return a fortune as a string.
+Returns conditions object with:
+- traffic_delay_hours: Current traffic delays
+- weather_delay_hours: Expected weather-related delays
+- conditions: Description of major conditions affecting route
         """.strip(),
         "parameters": {
             "type": "object",
             "properties": {
-                "topic": {
+                "route_id": {
                     "type": "string",
-                    "description": "What to make a prediction about",
-                    "enum": ["career", "love", "general"]
+                    "description": "Route identifier"
                 }
-            }
+            },
+            "required": ["route_id"]
+        }
+    },
+    {
+        "name": "dispatch_truck",
+        "description": """
+Assign a truck to a specific route and confirm the dispatch.
+
+Parameters:
+- route_id: Route identifier from find_routes
+
+Returns dispatch object with:
+- truck_id: Assigned truck identifier
+- driver: Driver information
+- departure_time: Scheduled departure
+- status: Dispatch confirmation status
+        """.strip(),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "route_id": {
+                    "type": "string",
+                    "description": "Route identifier"
+                }
+            },
+            "required": ["route_id"]
         }
     }
 ] 

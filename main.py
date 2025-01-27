@@ -24,11 +24,16 @@ def print_separator(title: str = "", char: str = "-", width: int = 80):
 
 def print_welcome():
     """Print a welcome message."""
-    print_separator("WELCOME TO REACT AGENT EXAMPLE", "=")
-    print("This is a demonstration of the ReAct framework using Google's Gemini.")
-    print("\nAvailable tools:")
-    print("1. Tell jokes (programming, general, or dad jokes)")
-    print("2. Predict your future (career, love, or general)")
+    print_separator("LOGISTICS ROUTE PLANNER", "=")
+    print("This tool helps plan and dispatch truck routes using the ReAct framework.")
+    print("\nCapabilities:")
+    print("1. Find available routes between cities")
+    print("2. Check current traffic and weather conditions")
+    print("3. Dispatch trucks and confirm assignments")
+    print("\nExample queries:")
+    print('- "Find a route from Boston to Miami"')
+    print('- "What\'s the best route from NYC to LA with current conditions?"')
+    print('- "Dispatch a truck from Chicago to Houston"')
     print("\nType 'exit' to quit.")
     print_separator()
 
