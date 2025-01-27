@@ -1,7 +1,18 @@
-"""Tool definitions for the Logistics Route Planner."""
+"""
+Tool definitions for the Logistics Route Planner.
 
-# List of available tools
+This file defines what tools are available to the AI. Each tool has:
+1. A name - what to call it
+2. A description - what it does and what information it needs
+3. Parameters - what information it needs and in what format
+
+This is just the definition of the tools - the actual code that runs them
+is in tool_executor.py
+"""
+
+# List of all available tools the AI can use
 TOOLS = [
+    # Tool 1: Find available shipping routes
     {
         "name": "find_routes",
         "description": """
@@ -19,18 +30,22 @@ Returns a list of route objects with:
         "parameters": {
             "type": "object",
             "properties": {
+                # The city we're starting from
                 "origin": {
                     "type": "string",
                     "description": "Starting city"
                 },
+                # The city we're going to
                 "destination": {
                     "type": "string",
                     "description": "Destination city"
                 }
             },
-            "required": ["origin", "destination"]
+            "required": ["origin", "destination"]  # Both cities are required
         }
     },
+    
+    # Tool 2: Check current road conditions
     {
         "name": "check_conditions",
         "description": """
@@ -47,14 +62,17 @@ Returns conditions object with:
         "parameters": {
             "type": "object",
             "properties": {
+                # Which route to check (must be from find_routes first)
                 "route_id": {
                     "type": "string",
                     "description": "Route identifier"
                 }
             },
-            "required": ["route_id"]
+            "required": ["route_id"]  # Route ID is required
         }
     },
+    
+    # Tool 3: Assign and dispatch a truck
     {
         "name": "dispatch_truck",
         "description": """
@@ -72,12 +90,13 @@ Returns dispatch object with:
         "parameters": {
             "type": "object",
             "properties": {
+                # Which route to dispatch a truck for
                 "route_id": {
                     "type": "string",
                     "description": "Route identifier"
                 }
             },
-            "required": ["route_id"]
+            "required": ["route_id"]  # Route ID is required
         }
     }
 ] 

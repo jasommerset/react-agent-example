@@ -28,6 +28,11 @@ In this example, we demonstrate these concepts using a logistics scenario where 
   - Tool selection and usage
   - Multi-step planning
   - Result observation and adaptation
+- Detailed logging of:
+  - Prompts sent to LLM
+  - Raw LLM responses
+  - Tool executions and results
+- Configurable execution delay for readability
 - Example tools for logistics:
   - `find_routes`: Discovers shipping routes
   - `check_conditions`: Evaluates conditions
@@ -39,7 +44,7 @@ In this example, we demonstrate these concepts using a logistics scenario where 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/react-agent-example.git
+git clone https://github.com/jasommerset/react-agent-example.git
 cd react-agent-example
 ```
 
@@ -60,9 +65,13 @@ cp .env.example .env
 # Edit .env and add your GOOGLE_API_KEY
 ```
 
-5. Run the example:
+5. Run the planner:
 ```bash
+# Run with default speed (no delay)
 python main.py
+
+# Run with 10-second delay between steps (recommended for learning)
+python main.py --delay 10
 ```
 
 ## Project Structure 📁
@@ -124,28 +133,94 @@ react-agent-example/
 }
 ```
 
-## Example Interaction 💬
+## Example Interaction
+
+This example shows how the agent processes a query through the ReAct framework:
 
 ```
-Your query: Find a route from Portland to Boston
+==================== Iteration 1 ====================
 
-🤔 Analyzing options...
-Found 2 possible routes:
-- RT1498: 44 hours via I-90
-- RT3021: 13 hours via I-95
+🤔 Sending prompt to LLM:
+------------------------------------------------------------
+[System prompt with query and available tools]
+------------------------------------------------------------
 
-📊 Checking conditions...
-- RT1498: +4.7h delay (Holiday traffic)
-- RT3021: +4.0h delay (Road work)
+💭 Waiting for LLM response...
 
-✨ Making decision...
-Selected RT3021:
-- Total time: 17 hours
-- Assigned: TRK-427 (Emma Johnson)
-- Departure: 2024-01-27 01:28:46
+📝 LLM responded with:
+------------------------------------------------------------
+{
+    "thought": "I need to find available routes first",
+    "action": {
+        "name": "find_routes",
+        "input": {
+            "origin": "Portland, OR",
+            "destination": "Boston, MA"
+        }
+    }
+}
+------------------------------------------------------------
+
+🔧 LLM requested tool execution:
+------------------------------------------------------------
+Tool: find_routes
+Input parameters:
+  - origin: Portland, OR
+  - destination: Boston, MA
+------------------------------------------------------------
+
+⚙️ Executing tool...
+
+📊 Tool execution results:
+------------------------------------------------------------
+{
+    "routes": [
+        {
+            "id": "RT1498",
+            "base_hours": 44,
+            "via": "I-90"
+        },
+        {
+            "id": "RT3021",
+            "base_hours": 13,
+            "via": "I-95"
+        }
+    ]
+}
+------------------------------------------------------------
+
+==================== Iteration 2 ====================
+
+[Process continues with checking conditions...]
 ```
 
-## Extending the Framework 🔌
+### Understanding the Flow
+
+1. **LLM Decision Making**:
+   - The agent sends a prompt to the LLM (🤔)
+   - The LLM thinks and decides what tool to use (📝)
+   - The LLM provides structured instructions for tool execution
+
+2. **Tool Execution**:
+   - The agent receives LLM's instructions (🔧)
+   - The agent executes the requested tool (⚙️)
+   - The tool returns results (📊)
+   - Results are fed back to the LLM for next decision
+
+3. **Iteration Process**:
+   - Each step is clearly logged with separators
+   - You can see exactly what the LLM decided
+   - You can see the exact tool inputs and outputs
+   - The process repeats until a final answer is reached
+
+The logging helps you understand:
+- What the LLM is thinking
+- Which tools it chooses and why
+- What data is being passed to tools
+- What results come back from tools
+- How the LLM uses these results
+
+## Extending the Framework
 
 Add your own tools in 3 steps:
 
@@ -169,12 +244,14 @@ async def my_tool_name(self, params):
 
 3. The ReAct agent will automatically incorporate it into its reasoning!
 
-## Understanding the Code 📚
+## Understanding the Code
 
 - `agent.py`: Core ReAct loop implementation
   - Think-Act-Observe cycle
   - Tool selection and execution
   - Response generation
+  - Detailed logging of prompts and responses
+  - Configurable execution delay
 
 - `prompts.py`: System prompts that guide the agent
   - Task description
@@ -194,9 +271,3 @@ async def my_tool_name(self, params):
 ## License 📄
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments 🙏
-
-- Inspired by the ReAct paper: [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
-- Built with Google's Gemini LLM
-- Made with ❤️ for learning and demonstration 

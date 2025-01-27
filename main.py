@@ -1,15 +1,17 @@
-"""CLI interface for the ReAct Agent."""
+"""Command line interface for the ReAct agent."""
 
 import asyncio
+import argparse
 import logging
 from typing import Optional
 
 from agent import Agent
 
-# Configure logging
+# Set up clean logging - just show the message without prefixes
 logging.basicConfig(
     level=logging.INFO,
-    format='%(message)s'  # Simple format for CLI
+    format='%(message)s',  # Only show the message part
+    force=True  # Override any existing configuration
 )
 logger = logging.getLogger(__name__)
 
@@ -23,26 +25,33 @@ def print_separator(title: str = "", char: str = "-", width: int = 80):
         print(f"\n{char * width}\n")
 
 def print_welcome():
-    """Print a welcome message."""
-    print_separator("LOGISTICS ROUTE PLANNER", "=")
-    print("This tool helps plan and dispatch truck routes using the ReAct framework.")
-    print("\nCapabilities:")
-    print("1. Find available routes between cities")
-    print("2. Check current traffic and weather conditions")
-    print("3. Dispatch trucks and confirm assignments")
+    """Print welcome message."""
+    print("\n" + "=" * 40)
+    print("LOGISTICS ROUTE PLANNER")
+    print("=" * 40)
+    print("\nThis tool helps you plan and dispatch truck routes.")
+    print("\nYou can:")
+    print("- Find routes between cities")
+    print("- Check traffic and weather conditions")
+    print("- Dispatch trucks and drivers")
     print("\nExample queries:")
-    print('- "Find a route from Boston to Miami"')
-    print('- "What\'s the best route from NYC to LA with current conditions?"')
-    print('- "Dispatch a truck from Chicago to Houston"')
-    print("\nType 'exit' to quit.")
-    print_separator()
+    print('- "Find a route from Seattle to Chicago"')
+    print('- "What\'s the fastest way to ship from Miami to Boston?"')
+    print('- "I need to transport goods from LA to NYC"')
+    print("\nType 'exit' to quit")
+    print("=" * 40 + "\n")
 
 async def main():
-    """Run the ReAct Agent CLI."""
-    print_welcome()
+    # Set up command line arguments
+    parser = argparse.ArgumentParser(description='Run the logistics route planner')
+    parser.add_argument('--delay', type=float, default=0,
+                      help='Delay in seconds between steps (default: 0)')
+    args = parser.parse_args()
     
-    # Initialize agent
-    agent = Agent()
+    # Initialize agent with configured delay
+    agent = Agent(delay_seconds=args.delay)
+    
+    print_welcome()
     
     while True:
         try:
