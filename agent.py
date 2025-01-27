@@ -31,7 +31,7 @@ class Agent:
         # Configure Gemini
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.0-pro",
+            model_name="gemini-1.5-flash",
             generation_config={
                 "temperature": 0.7,
                 "top_p": 0.8,
