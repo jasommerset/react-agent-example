@@ -42,7 +42,7 @@ class Agent:
         # Initialize tools and history
         self.tool_executor = ToolExecutor()
         self.history: List[str] = []
-        self.max_iterations = 5
+        self.max_iterations = 10
         
     async def process_query(self, query: str) -> Dict[str, Any]:
         """Process a query using the ReAct loop."""
